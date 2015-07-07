@@ -143,6 +143,9 @@ class CreateNetwork(neutronV20.CreateCommand):
         parser.add_argument(
             'name', metavar='NAME',
             help=_('Name of network to create.'))
+        parser.add_argument(
+            '--qos-policy',
+            help=_('Attach QoS policy ID or name to the network.'))
 
     def args2body(self, parsed_args):
         body = {'network': {
@@ -154,6 +157,16 @@ class CreateNetwork(neutronV20.CreateCommand):
                                 'provider:network_type',
                                 'provider:physical_network',
                                 'provider:segmentation_id'])
+
+        if parsed_args.qos_policy:
+            if parsed_args.qos_policy == 'None':
+                _qospolicy_id = None
+            else:
+                _qospolicy_id = neutronV20.find_resourceid_by_name_or_id(
+                    self.get_client(), 'qos_policy',
+                    parsed_args.qos_policy)
+            body['network'].update({'qos_policy': _qospolicy_id})
+
         return body
 
 
@@ -167,3 +180,28 @@ class UpdateNetwork(neutronV20.UpdateCommand):
     """Update network's information."""
 
     resource = 'network'
+
+    def add_known_arguments(self, parser):
+        parser.add_argument(
+            '--qos-policy',
+            help=_('Attach QoS policy ID or name to the network.'))
+        parser.add_argument(
+            '--no-qos-policy',
+            action='store_true',
+            help=_('Detach QoS policy from the network.'))
+
+    def args2body(self, parsed_args):
+        body = {'network': {}}
+        if parsed_args.qos_policy:
+            if parsed_args.qos_policy == 'None':
+                _qospolicy_id = None
+            else:
+                _qospolicy_id = neutronV20.find_resourceid_by_name_or_id(
+                    self.get_client(), 'policy',
+                    parsed_args.qos_policy)
+            body['network'].update({'qos_policy': _qospolicy_id})
+
+        if parsed_args.no_qos_policy:
+            body['network'].update({'qos_policy': None})
+
+        return body

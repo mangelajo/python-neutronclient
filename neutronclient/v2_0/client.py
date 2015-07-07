@@ -427,6 +427,8 @@ class Client(ClientBase):
     firewall_path = "/fw/firewalls/%s"
     net_partitions_path = "/net-partitions"
     net_partition_path = "/net-partitions/%s"
+    qos_policies_path = "/qos/policies"
+    qos_policy_path = "/qos/policies/%s"
 
     # API has no way to report plurals, so we have to hard code them
     EXTED_PLURALS = {'routers': 'router',
@@ -458,6 +460,7 @@ class Client(ClientBase):
                      'lbaas_healthmonitors': 'lbaas_healthmonitor',
                      'lbaas_members': 'lbaas_member',
                      'healthmonitors': 'healthmonitor',
+                     'policies': 'policy',
                      }
 
     @APIParamsCall
@@ -1599,6 +1602,42 @@ class Client(ClientBase):
     def delete_packet_filter(self, packet_filter_id):
         """Delete the specified packet filter."""
         return self.delete(self.packet_filter_path % packet_filter_id)
+
+    #TODO(QoS): changing resource = policies looks for method names
+    #           without the qos_ in front. See how to fix that, we
+    #           either instruct neutron client to look with qos_
+    #           prefix in front, or we change the qos API to
+    #           return/accept qos_policy dict...
+    @APIParamsCall
+    def list_policies(self, retrieve_all=True, **_params):
+        """Fetches a list of all qos policies for a tenant."""
+        # Pass filters in "params" argument to do_request
+
+        return self.list('policies', self.qos_policies_path,
+                         retrieve_all, **_params)
+
+    #TODO(QoS): 
+    @APIParamsCall
+    def show_policy(self, qos_policy, **_params):
+        """Fetches information of a certain qos policy."""
+        return self.get(self.qos_policy_path % qos_policy,
+                        params=_params)
+
+    @APIParamsCall
+    def create_policy(self, body=None):
+        """Creates a new qos policy."""
+        return self.post(self.qos_policies_path, body=body)
+
+    @APIParamsCall
+    def update_policy(self, qos_policy, body=None):
+        """Updates a qos policy."""
+        return self.put(self.qos_policy_path % qos_policy,
+                        body=body)
+
+    @APIParamsCall
+    def delete_policy(self, qos_policy):
+        """Deletes the specified qos policy."""
+        return self.delete(self.qos_policy_path % qos_policy)
 
     def __init__(self, **kwargs):
         """Initialize a new client for the Neutron v2.0 API."""

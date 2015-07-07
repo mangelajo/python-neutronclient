@@ -235,6 +235,10 @@ class CreatePort(neutronV20.CreateCommand, UpdatePortSecGroupMixin,
             'network_id', metavar='NETWORK',
             help=_('Network ID or name this port belongs to.'))
 
+        parser.add_argument(
+            '--qos-policy',
+            help=_('Attach QoS policy ID or name to the port.'))
+
     def args2body(self, parsed_args):
         client = self.get_client()
         _network_id = neutronV20.find_resourceid_by_name_or_id(
@@ -251,6 +255,14 @@ class CreatePort(neutronV20.CreateCommand, UpdatePortSecGroupMixin,
         if parsed_args.binding_profile:
             body['port'].update({'binding:profile':
                                  jsonutils.loads(parsed_args.binding_profile)})
+        if parsed_args.qos_policy:
+            if parsed_args.qos_policy == 'None':
+                _qospolicy_id = None
+            else:
+                _qospolicy_id = neutronV20.find_resourceid_by_name_or_id(
+                    self.get_client(), 'policy',
+                    parsed_args.qos_policy)
+            body['port'].update({'qos_policy_id': _qospolicy_id})
 
         self.args2body_secgroup(parsed_args, body['port'])
         self.args2body_extradhcpopt(parsed_args, body['port'])
@@ -280,6 +292,13 @@ class UpdatePort(neutronV20.UpdateCommand, UpdatePortSecGroupMixin,
             '--admin_state_up',
             choices=['True', 'False'],
             help=argparse.SUPPRESS)
+        parser.add_argument(
+            '--qos-policy',
+            help=_('Attach QoS policy ID or name to the port.'))
+        parser.add_argument(
+            '--no-qos-policy',
+            action='store_true',
+            help=_('Detach QoS policy from the port.'))
         self.add_arguments_secgroup(parser)
         self.add_arguments_extradhcpopt(parser)
 
@@ -290,6 +309,18 @@ class UpdatePort(neutronV20.UpdateCommand, UpdatePortSecGroupMixin,
         if parsed_args.admin_state_up:
             body['port'].update({'admin_state_up':
                                 parsed_args.admin_state_up})
+        if parsed_args.qos_policy:
+            if parsed_args.qos_policy == 'None':
+                _qospolicy_id = None
+            else:
+                _qospolicy_id = neutronV20.find_resourceid_by_name_or_id(
+                    self.get_client(), 'policy',
+                    parsed_args.qos_policy)
+            body['port'].update({'qos_policy_id': _qospolicy_id})
+
+        if parsed_args.no_qos_policy:
+            body['port'].update({'qos_policy_id': None})
+
         self.args2body_secgroup(parsed_args, body['port'])
         self.args2body_extradhcpopt(parsed_args, body['port'])
         return body
