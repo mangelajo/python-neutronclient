@@ -72,6 +72,7 @@ from neutronclient.neutron.v2_0.nsx import qos_queue
 from neutronclient.neutron.v2_0 import policyprofile
 from neutronclient.neutron.v2_0 import port
 from neutronclient.neutron.v2_0.qos import policy as qos_policy
+from neutronclient.neutron.v2_0.qos import rule as qos_rule
 from neutronclient.neutron.v2_0 import quota
 from neutronclient.neutron.v2_0 import router
 from neutronclient.neutron.v2_0 import securitygroup
@@ -366,6 +367,11 @@ COMMAND_V2 = {
     'qos-policy-create': qos_policy.CreateQoSPolicy,
     'qos-policy-update': qos_policy.UpdateQoSPolicy,
     'qos-policy-delete': qos_policy.DeleteQoSPolicy,
+    'qos-rule-list': qos_rule.ListQoSRule,
+    'qos-rule-show': qos_rule.ShowQoSRule,
+    'qos-rule-create': qos_rule.CreateQoSRule,
+    'qos-rule-update': qos_rule.UpdateQoSRule,
+    'qos-rule-delete': qos_rule.DeleteQoSRule,
 }
 
 COMMANDS = {'2.0': COMMAND_V2}

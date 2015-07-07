@@ -429,6 +429,12 @@ class Client(ClientBase):
     net_partition_path = "/net-partitions/%s"
     qos_policies_path = "/qos/policies"
     qos_policy_path = "/qos/policies/%s"
+    qos_rules_path = "/qos/policies/%(policy)s/"
+    qos_rule_path = "/qos/policies/%(policy)s/%(rule)s"
+    qos_bandwidth_limit_rules_path = (qos_rules_path +
+                                      "bandwidth-limit-rules")
+    qos_bandwidth_limit_rule_path = (qos_rules_path +
+                                     "bandwidth-limit-rules/%(rule)s")
 
     # API has no way to report plurals, so we have to hard code them
     EXTED_PLURALS = {'routers': 'router',
@@ -461,6 +467,7 @@ class Client(ClientBase):
                      'lbaas_members': 'lbaas_member',
                      'healthmonitors': 'healthmonitor',
                      'policies': 'policy',
+                     'rules': 'rule',
                      }
 
     @APIParamsCall
@@ -1638,6 +1645,36 @@ class Client(ClientBase):
     def delete_policy(self, qos_policy):
         """Deletes the specified qos policy."""
         return self.delete(self.qos_policy_path % qos_policy)
+
+    @APIParamsCall
+    def list_qos_rules(self, policy, retrieve_all=True, **_params):
+        """Fetches a list of all qos rules for the given policy."""
+        return self.list('qos_rules', self.qos_rules_path % policy,
+                         retrieve_all, **_params)
+
+    @APIParamsCall
+    def show_qos_rule(self, policy, rule):
+        """Fetches information of a certain qos rule."""
+        return self.get(self.qos_rule_path %
+                        {'policy': policy, 'rule': rule})
+
+    @APIParamsCall
+    def delete_qos_rule(self, policy, rule):
+        """Deletes the specified qos rules."""
+        return self.delete(self.qos_rule_path %
+                           {'policy': policy, 'rule': rule})
+
+    @APIParamsCall
+    def create_qos_bandwidth_limit_rule(self, policy, body=None):
+        """Creates a new bandwidth limit rule."""
+        return self.post(self.qos_bandwidth_limit_rules_path %
+                         {'policy': policy}, body=body)
+
+    @APIParamsCall
+    def update_qos_bandwidth_limit_rule(self, policy, rule, body=None):
+        """Updates a bandwidth limit rule."""
+        return self.put(self.qos_bandwidth_limit_rule_path %
+                        {'policy': policy, 'rule': rule}, body=body)
 
     def __init__(self, **kwargs):
         """Initialize a new client for the Neutron v2.0 API."""
