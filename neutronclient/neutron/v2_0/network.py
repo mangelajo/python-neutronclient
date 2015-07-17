@@ -163,9 +163,9 @@ class CreateNetwork(neutronV20.CreateCommand):
                 _qospolicy_id = None
             else:
                 _qospolicy_id = neutronV20.find_resourceid_by_name_or_id(
-                    self.get_client(), 'qos_policy',
+                    self.get_client(), 'policy',
                     parsed_args.qos_policy)
-            body['network'].update({'qos_policy': _qospolicy_id})
+            body['network'].update({'qos_policy_id': _qospolicy_id})
 
         return body
 
@@ -199,9 +199,9 @@ class UpdateNetwork(neutronV20.UpdateCommand):
                 _qospolicy_id = neutronV20.find_resourceid_by_name_or_id(
                     self.get_client(), 'policy',
                     parsed_args.qos_policy)
-            body['network'].update({'qos_policy': _qospolicy_id})
+            body['network'].update({'qos_policy_id': _qospolicy_id})
 
         if parsed_args.no_qos_policy:
-            body['network'].update({'qos_policy': None})
+            body['network'].update({'qos_policy_id': None})
 
         return body

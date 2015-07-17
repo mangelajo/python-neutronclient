@@ -128,7 +128,7 @@ class ShowPort(neutronV20.ShowCommand):
 
     resource = 'port'
 
-
+#TODO(QoS): use a mixin too for this:
 class UpdatePortSecGroupMixin(object):
     def add_arguments_secgroup(self, parser):
         group_sg = parser.add_mutually_exclusive_group()

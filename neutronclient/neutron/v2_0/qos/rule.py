@@ -53,7 +53,7 @@ def update_type_args2body(parsed_args, body):
 
 class ListQoSRule(neutronv20.ListCommand):
     """List all qos rules belonging to the specified policy."""
-    resource = 'qos_policy'
+    resource = 'policy'
 
     list_columns = ['id']
     _formatters = {}
@@ -81,7 +81,7 @@ class ListQoSRule(neutronv20.ListCommand):
 class ShowQoSRule(neutronv20.ShowCommand):
     """Show information about the given qos rule."""
 
-    resource = 'qos_policy'
+    resource = 'policy'
 
     def add_known_arguments(self, parser):
         add_rule_argument(parser)
@@ -104,7 +104,7 @@ class ShowQoSRule(neutronv20.ShowCommand):
 class CreateQoSRule(neutronv20.CreateCommand):
     """Create a qos rule."""
 
-    resource = 'qos_policy'
+    resource = 'policy'
 
     def add_known_arguments(self, parser):
         add_policy_argument(parser)
@@ -132,7 +132,7 @@ class CreateQoSRule(neutronv20.CreateCommand):
 
 class UpdateQoSRule(neutronv20.UpdateCommand):
     """Update the given qos rule."""
-    resource = 'qos_policy'
+    resource = 'policy'
 
     def add_known_arguments(self, parser):
         add_rule_argument(parser)
@@ -161,7 +161,7 @@ class UpdateQoSRule(neutronv20.UpdateCommand):
 
 class DeleteQoSRule(neutronv20.DeleteCommand):
     """Delete the given qos rule."""
-    resource = 'qos_policy'
+    resource = 'policy'
 
     def add_known_arguments(self, parser):
         add_rule_argument(parser)

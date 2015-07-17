@@ -429,12 +429,12 @@ class Client(ClientBase):
     net_partition_path = "/net-partitions/%s"
     qos_policies_path = "/qos/policies"
     qos_policy_path = "/qos/policies/%s"
-    qos_rules_path = "/qos/policies/%(policy)s/"
+    qos_rules_path = "/qos/policies/%(policy)s"
     qos_rule_path = "/qos/policies/%(policy)s/%(rule)s"
     qos_bandwidth_limit_rules_path = (qos_rules_path +
-                                      "bandwidth-limit-rules")
+                                      "/bandwidth-limit-rules")
     qos_bandwidth_limit_rule_path = (qos_rules_path +
-                                     "bandwidth-limit-rules/%(rule)s")
+                                     "/bandwidth-limit-rules/%(rule)s")
 
     # API has no way to report plurals, so we have to hard code them
     EXTED_PLURALS = {'routers': 'router',
@@ -1649,7 +1649,7 @@ class Client(ClientBase):
     @APIParamsCall
     def list_qos_rules(self, policy, retrieve_all=True, **_params):
         """Fetches a list of all qos rules for the given policy."""
-        return self.list('qos_rules', self.qos_rules_path % policy,
+        return self.list('rules', self.qos_rules_path % {'policy': policy},
                          retrieve_all, **_params)
 
     @APIParamsCall
